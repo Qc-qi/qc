@@ -4,25 +4,58 @@ on:
   push:
     branches: ["main"]
 
+# 允许写入 GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 只允许一个并发部署
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install PaperMod theme
+      - name: Checkout
+        uses: actions/checkout@v4  # 已升级到 v4
+        with:
+          submodules: false  # 我们不需要 git 子模块了
+
+      # 【关键步骤】手动安装主题，确保文件绝对存在
+      - name: Install Theme
         run: |
-          rm -rf themes/PaperMod
+          mkdir -p themes
+          # 强制重新下载 PaperMod 主题
           curl -L https://github.com/adityatelange/hugo-PaperMod/archive/refs/heads/master.tar.gz | tar -xz -C themes --strip-components=1
-          mv themes/hugo-PaperMod-master themes/PaperMod 2>/dev/null || true
+          mv themes/hugo-PaperMod-master themes/PaperMod
+
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: 'latest'
           extended: true
+
+      # 【关键步骤】清理旧的 public 文件夹并重新构建
       - name: Build
-        run: hugo --minify
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
+        run: |
+          rm -rf public
+          hugo --minify
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          path: ./public
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
