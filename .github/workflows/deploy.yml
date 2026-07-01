@@ -20,14 +20,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: false
+          submodules: 'recursive'   # 关键：拉取子模块（主题）
           fetch-depth: 0
-
-      - name: Install PaperMod theme
-        run: |
-          rm -rf themes/PaperMod
-          curl -L https://github.com/adityatelange/hugo-PaperMod/archive/refs/heads/master.tar.gz | tar -xz -C themes --strip-components=1
-          mv themes/hugo-PaperMod-master themes/PaperMod 2>/dev/null || true
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
