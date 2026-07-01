@@ -2,6 +2,7 @@ baseURL = "https://Qc-qi.github.io/qc/"
 languageCode = "zh-cn"
 title = "我的博客"
 theme = "PaperMod"
+contentDir = "content"
 
 [params]
   description = "个人技术博客"
