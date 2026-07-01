@@ -23,10 +23,13 @@ menu:
   ShowReadingTime = true
   ShowShareButtons = false
   ShowPostNavLinks = true
-  disableSpecialistPost: true
-  searchHidden: false
-  socialIcons:
-    - name: github
-      url: "https://github.com/Qc-qi"
-    - name: email
-      url: "mailto:3371219632@qq.com"
+  disableSpecialistPost = true
+  searchHidden = false
+
+[[params.socialIcons]]
+  name = "github"
+  url = "https://github.com/Qc-qi"
+
+[[params.socialIcons]]
+  name = "email"
+  url = "mailto:3371219632@qq.com"
